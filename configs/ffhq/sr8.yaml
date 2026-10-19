@@ -1,0 +1,30 @@
+# FLINT | FFHQ, super-resolution x8 (bicubic)
+task: sr_bicubic
+deg_scale: 8              # super-resolution factor
+sigma_y: 0.03             # std of the additive Gaussian measurement noise
+img_size: 768
+seed: 42
+img_path: data/ffhq
+prompt: "a high quality photo of a face"
+prompt_file: null
+cfg_scale: 1.0
+
+# Stage 1: proximal source initialization
+stage1_ref_steps: 29      # the K truncated steps follow the first K steps of this schedule
+K: 3                      # truncated ODE steps per iteration (K x iters = 21 NFEs)
+iters: 7                  # optimization iterations
+lr: 0.006                 # Adam learning rate
+sigma_max: 0.5            # rho is annealed linearly from sigma_max to sigma_min
+sigma_min: 0.02
+beta_kl: 0.1
+lambda_cum: 10.0
+omega_c: 0.05             # SWDC: the Wiener weight equals W_cut at this frequency (cycles/pixel)
+W_cut: 0.5
+alpha: 2.0                # SWDC: 1/|omega|^alpha image prior
+
+# Stage 2: posterior sampling with bounded stochasticity
+stage2_steps: 29
+lambda_s: 0.9             # stochasticity magnitude
+beta_start: 130           # data-consistency step size at the first step ...
+beta_end: 70              # ... decreasing linearly to this value at the last step
+dc_steps: 6               # gradient steps per data-consistency update

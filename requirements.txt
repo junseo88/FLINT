@@ -1,0 +1,17 @@
+torch==2.4.1
+torchvision==0.19.1
+diffusers==0.32.2
+transformers==4.45.0
+accelerate==0.34.2
+huggingface-hub==0.29.3
+safetensors==0.5.3
+tokenizers==0.20.3
+sentencepiece==0.2.0
+protobuf==6.33.2
+numpy==2.2.6
+scipy==1.15.2
+pillow==11.3.0
+pyyaml==6.0.2
+tqdm==4.67.1
+lpips==0.1.4
+pytorch-msssim==1.0.0
