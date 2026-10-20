@@ -97,6 +97,20 @@ def apply_mask(x, mask):
 
 
 # ---------------------------------------------------------------------------
+# Stage 2 building blocks
+# ---------------------------------------------------------------------------
+def beta_weight(u, schedule='linear'):
+    """Interpolation weight of the DC step schedule beta(t), from beta_start (u = 0) to beta_end (u = 1),
+    where u is the normalized sampling step. 'logarithm' moves away from beta_start faster:
+    log(1 + 6u) / log(7) (used for DIV2K SR x12)."""
+    if schedule == 'linear':
+        return u
+    if schedule == 'logarithm':
+        return math.log1p(6.0 * u) / math.log1p(6.0)
+    raise ValueError(f'unknown beta_schedule: {schedule}')
+
+
+# ---------------------------------------------------------------------------
 # FLINT
 # ---------------------------------------------------------------------------
 class FLINT:
@@ -254,7 +268,7 @@ class FLINT:
         timesteps, sigmas = self.schedule(steps)
 
         for i in range(steps):
-            u = i / (steps - 1)
+            u = beta_weight(i / (steps - 1), cfg.get('beta_schedule', 'linear'))
             step_scale = cfg['beta_start'] + (cfg['beta_end'] - cfg['beta_start']) * u
             t = timesteps[i].expand(z.shape[0]).to(self.device)
             with torch.no_grad(), _autocast(torch.float16):

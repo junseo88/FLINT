@@ -26,5 +26,6 @@ alpha: 2.0                # SWDC: 1/|omega|^alpha image prior
 stage2_steps: 29
 lambda_s: 0.9             # stochasticity magnitude
 beta_start: 130           # data-consistency step size at the first step ...
-beta_end: 30              # ... decreasing linearly to this value at the last step
+beta_end: 30              # ... decreasing to this value at the last step
+beta_schedule: linear     # shape of that decrease: linear or logarithm
 dc_steps: 6               # gradient steps per data-consistency update
