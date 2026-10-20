@@ -14,10 +14,10 @@ Seoul National University
 
 FLINT solves linear inverse problems with a pre-trained flow-matching model (Stable Diffusion 3.5-Medium) and no additional training. The initial noise and the stochasticity of sampling are coupled: a moderately close starting point already reaches the best attainable error, but the advantage is erased if too much noise accumulates during guided sampling. FLINT therefore works in two stages:
 
-1. **Proximal source initialization.** Seven iterations optimize the initial noise with a manifold-constrained proximal objective. Each iteration runs three truncated ODE steps and uses a spectrally weighted data-consistency loss.
+1. **Proximal source initialization.** A few iterations optimize the initial noise with a manifold-constrained proximal objective. Each iteration runs a few truncated ODE steps and uses a spectrally weighted data-consistency loss.
 2. **Posterior sampling with bounded stochasticity.** Guided sampling starts from the optimized noise and injects noise with a bell-shaped schedule, so the initialization advantage is preserved.
 
-The whole solver uses 50 NFEs, about 7 s and 23 GB of GPU memory per 768×768 image on one A100.
+The whole solver takes a few seconds per image on a single GPU.
 
 ## Quick Start
 
