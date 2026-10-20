@@ -12,7 +12,7 @@ Seoul National University
 
 ![overview](assets/overview.jpg)
 
-FLINT solves linear inverse problems with a pre-trained flow-matching model (Stable Diffusion 3.5-Medium) and no additional training. The initial noise and the stochasticity of sampling are coupled: a moderately close starting point already reaches the best attainable error, but the advantage is erased if too much noise accumulates during guided sampling. FLINT therefore works in two stages:
+FLINT solves linear inverse problems with a pre-trained flow-matching model (Stable Diffusion 3.5-Medium) and no additional training. The initial noise and the stochasticity of sampling are coupled. Once the initial noise is moderately close to a source-space solution (a typical Gaussian noise that the flow model maps to an image consistent with the measurement), optimizing it further brings little additional gain, but this head start is lost if too much noise accumulates during guided sampling. FLINT therefore works in two stages:
 
 1. **Proximal source initialization.** A few iterations optimize the initial noise with a manifold-constrained proximal objective. Each iteration runs a few truncated ODE steps and uses a spectrally weighted data-consistency loss.
 2. **Posterior sampling with bounded stochasticity.** Guided sampling starts from the optimized noise and injects noise with a bell-shaped schedule, so the initialization advantage is preserved.
