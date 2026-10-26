@@ -29,7 +29,7 @@
   a { color: var(--blue); }
   :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
-  .wide { width: min(1240px, calc(100vw - 48px)); margin-left: 50%; transform: translateX(-50%); }
+  .wide { width: min(1040px, calc(100vw - 48px)); margin-left: 50%; transform: translateX(-50%); }
 
   nav.sections { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.94); backdrop-filter: blur(6px);
                  border-bottom: 1px solid var(--line); }
@@ -104,7 +104,7 @@
   .fig-row figure { margin: 0; }
   .fig-row figure img { border-radius: 12px; background: #fff; }
   .fig-row figcaption { text-align: center; color: #495057; font-size: 15.5px; margin-top: 12px; }
-  .method-band figure.wide { margin-top: 34px; }
+  .method-band figure.wide, .method-band figure.in-band { margin-top: 34px; }
 
   /* trajectory scrubber */
   .traj { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: #fff; margin-top: 12px; }
@@ -223,7 +223,7 @@
       <p class="analogy">↳ A good start is wasted if the sampler randomizes it away.</p>
     </div>
   </div>
-  <figure class="wide">
+  <figure>
     <picture><source media="(max-width: 720px)" srcset="assets/fig/analysis_mobile.jpg"><img src="assets/fig/analysis.jpg" alt="How the starting point and the injected noise affect quality. a: quarter-circle diagram of the spherical interpolation from the exact inversion of the ground truth (C0 = 0) through the proximal start (C0 = 0.4) to random noise (C0 = pi/2). b, c: PSNR and LPIPS against C0 for four levels of the cumulative stochasticity G; all curves stay flat up to C0 = 0.4, and larger G lowers and flattens them. d: posterior samples, zooms and unconditional samples from the three starts; the random start loses hair detail and its unconditional sample is a different person."></picture>
     <figcaption>How close the start has to be, and how much injected noise erases the advantage (FlowDPS, Gaussian deblurring, 100 FFHQ images). (a) Every start lies on a spherical interpolation <i>x</i><sub>1</sub>(<i>C</i><sub>0</sub>) = [sin(θ − <i>C</i><sub>0</sub>) <i>x</i><sub>1</sub><sup>*</sup> + sin <i>C</i><sub>0</sub> ε] / sin θ between <i>x</i><sub>1</sub><sup>*</sup>, the ground truth inverted by the unconditional flow ODE (exact inversion), and a Gaussian noise ε; θ ≈ π/2 is the angle between them. (b, c) PSNR and LPIPS of the posterior samples, for four levels of the cumulative stochasticity <i>G</i> = ∫<sub>0</sub><sup>1</sup> <i>g</i><sub><i>t</i></sub><sup>2</sup> d<i>t</i> (<i>G</i> = 0: deterministic sampling). In this setup quality stays flat up to <i>C</i><sub>0</sub> ≈ 0.4, the sufficiency regime, while a larger <i>G</i> lowers every curve and shrinks the gap between a close start and the random one. (d) Posterior samples at <i>G</i> = 0.008 next to the unconditional sample generated from the same start without the measurement.</figcaption>
   </figure>
@@ -244,7 +244,7 @@
       <figure><img src="assets/fig/c3_schedule.jpg" alt="Injected noise per step for the bell-shaped and the front-loaded schedules."><figcaption>Little noise while the layout forms, more where detail is refined: the schedule protects the proximal start.</figcaption></figure>
     </div>
   </div>
-  <figure class="wide"><picture><source media="(max-width: 720px)" srcset="assets/fig/process_compare_mobile.jpg"><img src="assets/fig/process_compare.jpg" alt="Sampling trajectories of FLINT and three baselines. a: estimates of the clean image at t = 0.9, 0.8, 0.6, 0.4 and 0 for FlowChef, FlowDPS, Flower and FLINT on one face; FLINT already shows the face and its hair at t = 0.9, while the baselines are blurred or distorted. b: PSNR and LPIPS of the estimate against the timestep for the four methods; FLINT (Ours) is highest in PSNR and lowest in LPIPS from early on to t = 0." loading="lazy"></picture><figcaption>Sampling trajectories of FLINT and three baselines. (a) Tweedie estimate of the clean image along the sampling trajectory for FlowChef, FlowDPS, Flower and FLINT. (b) PSNR and LPIPS of that estimate along the trajectory (Ours = FLINT). FLINT enters the measurement-consistent region earlier than the three: its estimate already reflects the coarse structure of the reconstruction at <i>t</i> = 0.9 and then only refines detail, while the baselines are still forming the layout through much of the trajectory, and it keeps the highest quality of the four down to <i>t</i> = 0.</figcaption></figure>
+  <figure class="in-band"><picture><source media="(max-width: 720px)" srcset="assets/fig/process_compare_mobile.jpg"><img src="assets/fig/process_compare.jpg" alt="Sampling trajectories of FLINT and three baselines. a: estimates of the clean image at t = 0.9, 0.8, 0.6, 0.4 and 0 for FlowChef, FlowDPS, Flower and FLINT on one face; FLINT already shows the face and its hair at t = 0.9, while the baselines are blurred or distorted. b: PSNR and LPIPS of the estimate against the timestep for the four methods; FLINT (Ours) is highest in PSNR and lowest in LPIPS from early on to t = 0." loading="lazy"></picture><figcaption>Sampling trajectories of FLINT and three baselines. (a) Tweedie estimate of the clean image along the sampling trajectory for FlowChef, FlowDPS, Flower and FLINT. (b) PSNR and LPIPS of that estimate along the trajectory (Ours = FLINT). FLINT enters the measurement-consistent region earlier than the three: its estimate already reflects the coarse structure of the reconstruction at <i>t</i> = 0.9 and then only refines detail, while the baselines are still forming the layout through much of the trajectory, and it keeps the highest quality of the four down to <i>t</i> = 0.</figcaption></figure>
 </section>
 
 
