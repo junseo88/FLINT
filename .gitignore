@@ -1,6 +1,6 @@
 __pycache__/
 *.pyc
-results/
+/results/
 motionblur/
 data/ffhq/
 data/div2k/
