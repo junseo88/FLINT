@@ -13,6 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
 <style>
   :root {
     --blue: #2a78d6; --blue-dark: #1d5aa6; --orange: #eb6834;
@@ -50,9 +52,12 @@
   .affil { color: var(--ink-2); font-size: 15px; margin: 0 0 4px; }
   .note { color: var(--ink-3); font-size: 13px; margin: 0 0 22px; }
   .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--ink);
-         color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; }
-  .btn[aria-disabled="true"] { background: #e2e8f0; color: #64748b; cursor: default; }
+  .btn { display: inline-flex; align-items: center; gap: 9px; padding: 9px 22px; border-radius: 999px; background: #e8f1fc;
+         color: var(--blue-dark); font-weight: 800; font-size: 16px; text-decoration: none;
+         transition: transform .12s ease, background .2s ease, color .2s ease; }
+  .btn:hover { transform: translateY(-2px); background: var(--blue); color: #fff; }
+  .btn .icon { display: inline-flex; justify-content: center; min-width: 1.1em; font-size: 1.05em; }
+  .btn[aria-disabled="true"], .btn[aria-disabled="true"]:hover { background: var(--bg-2); color: var(--ink-3); cursor: default; transform: none; }
   .btn small { font-weight: 400; }
   .tldr { margin: 30px auto 0; max-width: 760px; font-size: 20px; line-height: 1.5; text-align: left; }
   .tldr b { color: var(--blue-dark); }
@@ -179,9 +184,10 @@
   <p class="affil"><sup>1</sup>Dept. of ECE &nbsp; <sup>2</sup>IPAI &nbsp; <sup>3</sup>INMC &amp; AIIS, Seoul National University</p>
   <p class="note">†Corresponding author</p>
   <div class="links">
-    <a class="btn" aria-disabled="true">Paper <small>(coming soon)</small></a>
-    <a class="btn" aria-disabled="true">arXiv <small>(coming soon)</small></a>
-    <a class="btn" href="https://github.com/junseo88/FLINT">Code</a>
+    <a class="btn" aria-disabled="true"><span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv <small>(coming soon)</small></span></a>
+    <a class="btn" href="https://github.com/junseo88/FLINT" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
+    <a class="btn" href="#bibtex"><span class="icon"><i class="fas fa-quote-right"></i></span><span>BibTeX</span></a>
+    <a class="btn" aria-disabled="true"><span class="icon">🤗</span><span>HF Paper <small>(coming soon)</small></span></a>
   </div>
   <p class="tldr"><span class="hl">Initialize close enough, sample carefully to keep it.</span> FLINT first moves the initial noise near one that the model maps to an image consistent with the measurement, then samples with little noise while the image takes shape. The result: state-of-the-art perceptual quality and competitive distortion metrics, at a lower sampling cost than the flow-matching baselines.</p>
 </header>

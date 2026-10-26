@@ -1,6 +1,6 @@
 # [NeurIPS 2026] FLINT: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems
 
-[Junseo Bang](), [Daewon Choi](), [Dong Ju Moon](), [Se Young Chun]()
+[Junseo Bang](https://junseo88.github.io/), [Daewon Choi](https://www.linkedin.com/in/%EB%8C%80%EC%9B%90-%EC%B5%9C-240aa1217/), [Dong Ju Moon](https://mundongju.github.io/), [Se Young Chun](https://icl.snu.ac.kr/)
 
 Seoul National University
 
@@ -15,7 +15,7 @@ Seoul National University
 FLINT solves linear inverse problems with a pre-trained flow-matching model (Stable Diffusion 3.5-Medium) and no additional training. The initial noise and the stochasticity of sampling are coupled. Once the initial noise is moderately close to a source-space solution (a typical Gaussian noise that the flow model maps to an image consistent with the measurement), optimizing it further brings little additional gain, but this head start can be eroded if too much noise accumulates during guided sampling. FLINT therefore works in two stages:
 
 1. **Proximal source initialization.** A few iterations optimize the initial noise with a manifold-constrained proximal objective. Each iteration runs a few truncated ODE steps and uses a spectrally weighted data-consistency loss.
-2. **Posterior sampling with bounded stochasticity.** Guided sampling starts from the optimized noise and injects noise with a bell-shaped schedule to help preserve the initialization advantage.
+2. **Proximity-preserving posterior sampling with bounded stochasticity.** Guided sampling starts from the optimized noise and injects noise with a bell-shaped schedule to help preserve the initialization advantage.
 
 The whole solver takes under ten seconds per 768×768 image on a single A100 GPU.
 
@@ -71,9 +71,9 @@ The measurement, the reconstruction and the ground truth are saved to `<workdir>
 
 All measurements include Gaussian noise with σ<sub>y</sub> = 0.03. Every entry of a config can also be set from the command line, e.g. `--stage2_steps 9` runs FLINT with 30 NFEs in total.
 
-## Reproducing the paper
+## Evaluation
 
-Place the evaluation images ([FFHQ](https://github.com/NVlabs/ffhq-dataset) and the [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) training set) as follows:
+To evaluate FLINT on the FFHQ and DIV2K benchmarks of the paper, place the evaluation images ([FFHQ](https://github.com/NVlabs/ffhq-dataset) and the [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) training set) as follows:
 
 ```
 data/
