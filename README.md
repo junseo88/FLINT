@@ -1,6 +1,6 @@
 # [NeurIPS 2026] FLINT: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems
 
-[Junseo Bang](https://junseo88.github.io/), [Daewon Choi](https://www.linkedin.com/in/%EB%8C%80%EC%9B%90-%EC%B5%9C-240aa1217/), [Dong Ju Moon](https://mundongju.github.io/), [Se Young Chun](https://icl.snu.ac.kr/)
+[Junseo Bang](https://junseo88.github.io/), [Daewon Choi](https://www.linkedin.com/in/%EB%8C%80%EC%9B%90-%EC%B5%9C-240aa1217/), [Dong Ju Mun](https://mundongju.github.io/), [Se Young Chun](https://icl.snu.ac.kr/)
 
 Seoul National University
 
@@ -104,7 +104,7 @@ wait
 ```bibtex
 @inproceedings{bang2026flint,
   title     = {{FLINT}: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems},
-  author    = {Bang, Junseo and Choi, Daewon and Moon, Dong Ju and Chun, Se Young},
+  author    = {Bang, Junseo and Choi, Daewon and Mun, Dong Ju and Chun, Se Young},
   booktitle = {Advances in Neural Information Processing Systems},
   year      = {2026}
 }
