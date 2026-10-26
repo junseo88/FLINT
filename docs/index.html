@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLINT | NeurIPS 2026</title>
+<meta name="description" content="FLINT: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems (NeurIPS 2026).">
+<meta property="og:title" content="FLINT: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems">
+<meta property="og:description" content="NeurIPS 2026. Initialize close enough, sample carefully to keep it: a training-free two-stage posterior sampler for flow-matching inverse problems.">
+<meta property="og:image" content="https://junseo88.github.io/FLINT/assets/fig/overview.jpg">
+<meta property="og:url" content="https://junseo88.github.io/FLINT/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2a78d6; --blue-dark: #1d5aa6; --orange: #eb6834;
+    --ink: #1e293b; --ink-2: #475569; --ink-3: #94a3b8;
+    --bg: #ffffff; --bg-2: #f8fafc; --line: #e2e8f0;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--ink);
+         background: var(--bg); font-size: 17px; line-height: 1.65; }
+  a { color: var(--blue); }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+  .wide { width: min(1240px, calc(100vw - 48px)); margin-left: 50%; transform: translateX(-50%); }
+
+  nav.sections { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.94); backdrop-filter: blur(6px);
+                 border-bottom: 1px solid var(--line); }
+  nav.sections ul { display: flex; gap: 6px; justify-content: center; list-style: none; margin: 0; padding: 10px 12px; flex-wrap: wrap; }
+  nav.sections a { text-decoration: none; color: var(--ink-2); font-size: 15px; padding: 4px 10px; border-radius: 999px; }
+  nav.sections a:hover { background: var(--bg-2); color: var(--ink); }
+
+  header.hero { text-align: center; padding: 52px 0 28px; }
+  /* title block after efficient-SID: badge, heavy title with the name in blue, blue authors */
+  .venue { display: inline-flex; align-items: center; gap: 9px; font-weight: 700; font-size: 18px; color: #c23b32;
+           background: linear-gradient(90deg, #fde8e6 0%, #fdf2f0 100%); border-left: 4px solid #d6453d;
+           border-radius: 16px; padding: 10px 22px 10px 18px; }
+  .venue svg { width: 20px; height: 20px; flex: none; }
+  h1.title { width: min(1120px, calc(100vw - 48px)); margin: 22px 0 20px 50%; transform: translateX(-50%);
+             font-size: 56px; line-height: 1.12; font-weight: 900; letter-spacing: -0.6px; color: #1e293b; text-wrap: balance; }
+  h1.title .nowrap { white-space: nowrap; }
+  .authors { font-size: 22px; font-weight: 700; color: var(--blue); margin: 0 0 6px; }
+  .authors span { white-space: nowrap; }
+  .authors sup { font-size: 0.6em; }
+  .affil { color: var(--ink-2); font-size: 15px; margin: 0 0 4px; }
+  .note { color: var(--ink-3); font-size: 13px; margin: 0 0 22px; }
+  .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--ink);
+         color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; }
+  .btn[aria-disabled="true"] { background: #e2e8f0; color: #64748b; cursor: default; }
+  .btn small { font-weight: 400; }
+  .tldr { margin: 30px auto 0; max-width: 760px; font-size: 20px; line-height: 1.5; text-align: left; }
+  .tldr b { color: var(--blue-dark); }
+
+  section { padding: 44px 0 8px; }
+  h2 { font-size: 30px; font-weight: 900; margin: 0 0 14px; letter-spacing: -0.3px; }
+  h3 { font-size: 20px; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; }
+  figure { margin: 18px 0 8px; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 8px; }
+  figure.paradigms img { border-radius: 0; background: #fff; }
+  figcaption { color: var(--ink-2); font-size: 14.5px; line-height: 1.5; margin-top: 8px; }
+  .bound { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
+           margin: 16px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 26px; }
+  .bound img { display: block; height: auto; max-width: 100%; }
+  .bound .eq-a { width: 465px; }
+  .bound .eq-b { width: 283px; }
+  .bound .eq-m { display: none; width: 320px; }
+  sub, sup { line-height: 0; }
+  .insights { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .insight { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: #fff; }
+  .insight h3 { margin: 0 0 6px; font-size: 18px; }
+  .insight .analogy { color: var(--ink-2); font-size: 15px; margin: 6px 0 0; }
+  /* Method section in layout B's design: tinted full-bleed band, stage cards, two figures side by side */
+  .method-band { --band: #f8f9fa; background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax);
+                 margin-top: 36px; padding: 40px 0 36px; }
+  .method-wide { width: min(1140px, calc(100vw - 48px)); margin-left: 50%; transform: translateX(-50%); }
+  .method-band > h2 { text-align: center; }
+  .method-band > h2::after { content: ''; display: block; width: 72px; height: 4px; border-radius: 2px; margin: 12px auto 0;
+                             background: linear-gradient(120deg, #eb6834 0%, #eb6834 18%, #2a78d6 72%, #2a78d6 100%); }
+  .method-lead { color: var(--ink-2); margin: 0 auto 26px; max-width: 760px; text-align: center; font-size: 18px; }
+  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 0 0 30px; }
+  .stage { background: #fff; border: 1px solid #dee2e6; border-radius: 12px; padding: 20px 24px; }
+  .stage h3 { margin: 0 0 10px; font-size: 22px; line-height: 1.3; font-weight: 900; }
+  .stage .num { background: linear-gradient(120deg, #eb6834 0%, #eb6834 18%, #2a78d6 72%, #2a78d6 100%);
+                -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stage p { margin: 0 0 12px; }
+  .stage .cost { color: #6c757d; font-size: 15.5px; margin: 0; }
+  .hl { background: linear-gradient(120deg, #eb6834 0%, #eb6834 18%, #2a78d6 72%, #2a78d6 100%);
+                     -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 900; }
+  mark.kw { background: #e8f1fc; color: var(--blue-dark); font-weight: 700; padding: 0 0.35em; border-radius: 5px;
+            -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .fig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .fig-row figure { margin: 0; }
+  .fig-row figure img { border-radius: 12px; background: #fff; }
+  .fig-row figcaption { text-align: center; color: #495057; font-size: 15.5px; margin-top: 12px; }
+  .method-band figure.wide { margin-top: 34px; }
+
+  /* trajectory scrubber */
+  .traj { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: #fff; margin-top: 12px; }
+  .traj .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .traj .pane { position: relative; }
+  .traj .pane img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; }
+  .traj .tag { position: absolute; left: 10px; top: 10px; font-weight: 700; font-size: 14px; color: #fff; padding: 2px 10px; border-radius: 999px; }
+  .traj .psnr { position: absolute; right: 10px; bottom: 10px; font-size: 14px; color: #fff; background: rgba(0,0,0,.55); padding: 2px 9px; border-radius: 6px; }
+  .traj .controls { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+  .traj input[type=range] { flex: 1; accent-color: var(--blue); }
+  .traj button { font: inherit; font-weight: 700; font-size: 15px; border: 0; border-radius: 999px; padding: 6px 16px; background: var(--ink); color: #fff; cursor: pointer; }
+  .traj .readout { font-size: 14px; color: var(--ink-2); min-width: 150px; text-align: right; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .tabs button { font: inherit; font-size: 15px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 14px; cursor: pointer; color: var(--ink-2); }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* comparison sliders */
+  .compare-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .compare { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: ew-resize; touch-action: none; }
+  .compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; -webkit-user-drag: none; }
+  .compare-top { position: absolute; inset: 0; }
+  .compare-handle { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.25); transform: translateX(-1px); pointer-events: none; }
+  .compare-range { position: absolute; inset: auto 0 0 0; width: 100%; opacity: 0; height: 100%; margin: 0; cursor: ew-resize; }
+  .compare-range:focus-visible + .compare-handle { box-shadow: 0 0 0 3px var(--blue); }
+  .compare .lab, .gal-gt .lab { position: absolute; bottom: 8px; font-size: 13px; color: #fff; background: rgba(0,0,0,.55); padding: 1px 8px; border-radius: 6px; pointer-events: none; }
+  .compare .lab.l { left: 8px; } .compare .lab.r, .gal-gt .lab.r { right: 8px; }
+  /* results gallery */
+  .seg-row { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 12px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { font: inherit; font-size: 15px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 14px; cursor: pointer; color: var(--ink-2); }
+  .seg button[aria-checked="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .gal-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .gal-gt { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
+  .gal-gt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gal-cap { color: var(--ink-2); font-size: 14.5px; line-height: 1.5; margin: 8px 0 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 6px; text-align: center; border-bottom: 1px solid var(--line); }
+  th { font-weight: 700; color: var(--ink-2); }
+  td:first-child, th:first-child { text-align: left; }
+  tr.ours td { background: #eef5fd; }
+  tr.ours td:first-child { font-weight: 700; }
+  .best { color: var(--blue-dark); font-weight: 900; }
+  .table-wrap { overflow-x: auto; }
+  .ds { text-align: left; font-weight: 700; color: var(--ink); background: var(--bg-2); }
+
+  pre.bib { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; font-size: 13.5px; overflow-x: auto; }
+  .copy { float: right; font: inherit; font-size: 14px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+  footer { color: var(--ink-3); font-size: 13px; text-align: center; padding: 40px 0; }
+
+  @media (max-width: 720px) {
+    h1.title { font-size: 32px; line-height: 1.15; } .authors { font-size: 18px; }
+    .venue { font-size: 16px; } h1.title br { display: none; }
+    .bound .eq-a, .bound .eq-b { display: none; } .bound .eq-m { display: block; }
+    .insights, .stages, .fig-row, .compare-grid, .gal-pair, .traj .pair { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  .paper-table { margin: 18px 0 0; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-scroll img { display: block; width: 100%; min-width: 720px; height: auto; }
+  .paper-table figcaption { font-size: 0.9em; opacity: .8; margin-top: 8px; }
+</style>
+</head>
+<body>
+<nav class="sections" aria-label="Sections">
+  <ul>
+    <li><a href="#idea">Idea</a></li><li><a href="#method">Method</a></li>
+    <li><a href="#results">Results</a></li><li><a href="#bibtex">BibTeX</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+<header class="hero">
+  <span class="venue"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="M8.6 13.6 7.2 21.5 12 19l4.8 2.5-1.4-7.9"/></svg>NeurIPS 2026</span>
+  <h1 class="title"><span class="hl">FLINT</span>: Coupling Proximal Initialization<br> and Bounded Stochasticity for<br> <span class="nowrap">Flow-Matching</span> Inverse Problems</h1>
+  <p class="authors"><span>Junseo Bang<sup>1</sup></span>, <span>Daewon Choi<sup>2</sup></span>, <span>Dong Ju Moon<sup>1</sup></span>, <span>Se Young Chun<sup>1,2,3†</sup></span></p>
+  <p class="affil"><sup>1</sup>Dept. of ECE &nbsp; <sup>2</sup>IPAI &nbsp; <sup>3</sup>INMC &amp; AIIS, Seoul National University</p>
+  <p class="note">†Corresponding author</p>
+  <div class="links">
+    <a class="btn" aria-disabled="true">Paper <small>(coming soon)</small></a>
+    <a class="btn" aria-disabled="true">arXiv <small>(coming soon)</small></a>
+    <a class="btn" href="https://github.com/junseo88/FLINT">Code</a>
+  </div>
+  <p class="tldr"><span class="hl">Initialize close enough, sample carefully to keep it.</span> FLINT first moves the initial noise near one that the model maps to an image consistent with the measurement, then samples with little noise while the image takes shape. The result: state-of-the-art perceptual quality and competitive distortion metrics, at a lower sampling cost than the flow-matching baselines.</p>
+</header>
+
+<figure class="wide">
+  <img src="assets/fig/overview.jpg" alt="FLINT pipeline: a measurement, Stage 1 optimizing the initial noise in a few iterations, Stage 2 sampling with a bell-shaped noise schedule, and the reconstruction next to the ground truth.">
+</figure>
+
+<section id="abstract">
+  <h2>Abstract</h2>
+  <p>Flow matching models have emerged as a dominant paradigm for generative posterior sampling in imaging inverse problems. Existing solvers follow two distinct lines of work: trajectory-space methods, which refine sampling dynamics from random initial noise, and source-space methods, which optimize the initial noise itself. While most prior work treats these as independent design choices, we show that they are inherently coupled. We derive a unified stability bound that links initialization proximity and cumulative sampling stochasticity through a multiplicative envelope, complemented by two empirical observations. First, we identify a sufficiency regime in which a moderately optimized proximal source initialization is enough to attain the performance plateau, rendering exhaustive source-space optimization unnecessary. Second, this initial advantage is fragile: it is eroded by excessive stochasticity accumulation during guided sampling, necessitating a mechanism that bounds the cumulative noise injection. These findings motivate FLINT, a two-stage framework that operationalizes this coupling. FLINT establishes a high-fidelity starting point via a manifold-constrained proximal objective in only a few iterations, then performs guided sampling under a bounded stochasticity schedule that helps prevent erasure of the initialization advantage. Across diverse inverse problems, FLINT delivers state of the art perceptual quality and competitive distortion metrics while maintaining superior computational efficiency.</p>
+</section>
+
+<section id="idea">
+  <h2>Initialization and stochasticity are coupled</h2>
+  <p>Most solvers either steer the sampling trajectory from random noise or optimize the initial noise itself, and the two are usually treated as separate design choices.</p>
+  <figure class="wide paradigms">
+    <picture><source media="(max-width: 720px)" srcset="assets/fig/paradigms_mobile.svg"><img src="assets/fig/paradigms.svg" alt="Five panels on stacked noise-level manifolds from M1 at the top to M0 at the bottom, with the measurement subspace y = Ax as a green line. Trajectory-space methods: (a) DPS and FlowChef start from random noise and alternate a generative step with a measurement-guided correction on every noisy state; (b) FlowDPS and Flower jump to the clean estimate, correct it and re-noise to the next level. Source-space methods: (c) DMPlug and D-Flow run many MAP iterations on the initial noise, then one deterministic flow to x0; (d) N-HMC and D-Flow SGLD sample the initial noise with Hamiltonian or Langevin dynamics instead. (e) FLINT: a short measurement-guided move from the random start to a proximal start, then a guided trajectory inside a narrow band of bounded stochasticity that ends where M0 meets the measurement subspace."></picture>
+    <figcaption>Where FLINT sits. Trajectory-space methods start from random noise and steer every step: (a) a likelihood correction on each noisy state <i>x</i><sub><i>t</i></sub>, or (b) a correction on the clean estimate <i>x̂</i><sub>0|<i>t</i></sub> followed by re-noising to the next noise level. Source-space methods act on the initial noise through the deterministic flow map <i>x</i><sub>0</sub> = Φ(<i>x</i><sub>1</sub>): (c) MAP optimization, or (d) posterior sampling of <i>x</i><sub>1</sub> with Hamiltonian or Langevin dynamics. (e) FLINT couples a proximal source initialization <i>x̃</i><sub>1</sub>, reached in a few iterations, with bounded stochasticity during guided sampling, to help the trajectory keep the advantage of the initialization.</figcaption>
+  </figure>
+  <p>Our analysis puts them in one bound. Take a reference noise <i>x</i><sub>1</sub><sup>*</sup> that is typical under the prior and consistent with the measurement, and let <i>x</i><sub>0</sub><sup>*</sup> be the output of the same guided sampler run from <i>x</i><sub>1</sub><sup>*</sup> with its injected noise switched off. A start <i>x̃</i><sub>1</sub> within distance δ of <i>x</i><sub>1</sub><sup>*</sup> then gives a sample Φ<sub><i>g</i></sub>(<i>x̃</i><sub>1</sub>) that obeys (Proposition 3.1)</p>
+  <div class="bound"><img class="eq-a" src="assets/fig/eq4_bound.svg" alt="E of the squared distance between Phi_g of x-tilde_1 and x_0-star is at most 2 e to the 2 M-plus, times delta squared, the initialization error term, plus d times G, the stochastic departure term,"><img class="eq-b" src="assets/fig/eq4_mplus.svg" alt="with M-plus defined as the maximum of 0 and the supremum over s in [0, 1] of the integral from 0 to s of m(u) du."><img class="eq-m" src="assets/fig/eq4_mobile.svg" alt="E of the squared distance between Phi_g of x-tilde_1 and x_0-star is at most 2 e to the 2 M-plus, times delta squared, the initialization error term, plus d times G, the stochastic departure term, with M-plus defined as the maximum of 0 and the supremum over s in [0, 1] of the integral from 0 to s of m(u) du."></div>
+  <p>where <i>d</i> is the dimension, <i>G</i> the stochasticity accumulated during sampling, and <i>m</i>(<i>t</i>) bounds how fast nearby trajectories separate. The two terms add up under a common prefactor. This motivates two design choices.</p>
+  <div class="insights">
+    <div class="insight">
+      <h3>A nearby start is enough</h3>
+      <p>Once δ² ≪ d·G, pushing δ further barely lowers the bound, and empirically quality plateaus long before exact inversion (the sufficiency regime below).</p>
+      <p class="analogy">↳ Exhaustive source-space optimization buys little.</p>
+    </div>
+    <div class="insight">
+      <h3>Too much noise erases it</h3>
+      <p>A large G raises the bound for every start, however close: for a fixed M<sub>+</sub> the bound grows with G. The noise injected during sampling has to stay limited.</p>
+      <p class="analogy">↳ A good start is wasted if the sampler randomizes it away.</p>
+    </div>
+  </div>
+  <figure class="wide">
+    <picture><source media="(max-width: 720px)" srcset="assets/fig/analysis_mobile.jpg"><img src="assets/fig/analysis.jpg" alt="How the starting point and the injected noise affect quality. a: quarter-circle diagram of the spherical interpolation from the exact inversion of the ground truth (C0 = 0) through the proximal start (C0 = 0.4) to random noise (C0 = pi/2). b, c: PSNR and LPIPS against C0 for four levels of the cumulative stochasticity G; all curves stay flat up to C0 = 0.4, and larger G lowers and flattens them. d: posterior samples, zooms and unconditional samples from the three starts; the random start loses hair detail and its unconditional sample is a different person."></picture>
+    <figcaption>How close the start has to be, and how much injected noise erases the advantage (FlowDPS, Gaussian deblurring, 100 FFHQ images). (a) Every start lies on a spherical interpolation <i>x</i><sub>1</sub>(<i>C</i><sub>0</sub>) = [sin(θ − <i>C</i><sub>0</sub>) <i>x</i><sub>1</sub><sup>*</sup> + sin <i>C</i><sub>0</sub> ε] / sin θ between <i>x</i><sub>1</sub><sup>*</sup>, the ground truth inverted by the unconditional flow ODE (exact inversion), and a Gaussian noise ε; θ ≈ π/2 is the angle between them. (b, c) PSNR and LPIPS of the posterior samples, for four levels of the cumulative stochasticity <i>G</i> = ∫<sub>0</sub><sup>1</sup> <i>g</i><sub><i>t</i></sub><sup>2</sup> d<i>t</i> (<i>G</i> = 0: deterministic sampling). In this setup quality stays flat up to <i>C</i><sub>0</sub> ≈ 0.4, the sufficiency regime, while a larger <i>G</i> lowers every curve and shrinks the gap between a close start and the random one. (d) Posterior samples at <i>G</i> = 0.008 next to the unconditional sample generated from the same start without the measurement.</figcaption>
+  </figure>
+</section>
+
+<section id="method" class="method-band">
+  <h2>Method</h2>
+  <p class="method-lead"><span class="hl">A few cheap iterations</span> to start close, then sampling that keeps the injected noise small while the layout forms.</p>
+  <div class="method-wide">
+    <div class="stages">
+      <div class="stage"><h3><span class="num">Stage 1</span> Proximal source initialization</h3>
+        <p>A few Adam iterations on μ, the mean of a Gaussian variational distribution over the initial noise. Each iteration forms a clean estimate by <mark class="kw">truncated sampling</mark>, scores it with a Wiener-weighted data-consistency loss that trusts low frequencies plus KL and cumulant terms that keep μ Gaussian-like, and backpropagates through the first step only via the <mark class="kw">SDO shortcut</mark>.</p></div>
+      <div class="stage"><h3><span class="num">Stage 2</span> Proximity-preserving posterior sampling with bounded stochasticity</h3>
+        <p>Guided sampling from μ: estimate the clean image, correct it toward the measurement, re-noise with η(t) = λ<sub>s</sub>√(1−σ<sub>t</sub>)·σ<sub>t</sub>, which is small at t ≈ 1 and at t ≈ 0.</p></div>
+    </div>
+    <div class="fig-row">
+      <figure><img src="assets/fig/c2_stage1.jpg" alt="Stage-1 estimates and loss curve over the iterations."><figcaption>The data-consistency loss plateaus within a few iterations.</figcaption></figure>
+      <figure><img src="assets/fig/c3_schedule.jpg" alt="Injected noise per step for the bell-shaped and the front-loaded schedules."><figcaption>Little noise while the layout forms, more where detail is refined: the schedule protects the proximal start.</figcaption></figure>
+    </div>
+  </div>
+  <figure class="wide"><picture><source media="(max-width: 720px)" srcset="assets/fig/process_compare_mobile.jpg"><img src="assets/fig/process_compare.jpg" alt="Sampling trajectories of FLINT and three baselines. a: estimates of the clean image at t = 0.9, 0.8, 0.6, 0.4 and 0 for FlowChef, FlowDPS, Flower and FLINT on one face; FLINT already shows the face and its hair at t = 0.9, while the baselines are blurred or distorted. b: PSNR and LPIPS of the estimate against the timestep for the four methods; FLINT (Ours) is highest in PSNR and lowest in LPIPS from early on to t = 0." loading="lazy"></picture><figcaption>Sampling trajectories of FLINT and three baselines. (a) Tweedie estimate of the clean image along the sampling trajectory for FlowChef, FlowDPS, Flower and FLINT. (b) PSNR and LPIPS of that estimate along the trajectory (Ours = FLINT). FLINT enters the measurement-consistent region earlier than the three: its estimate already reflects the coarse structure of the reconstruction at <i>t</i> = 0.9 and then only refines detail, while the baselines are still forming the layout through much of the trajectory, and it keeps the highest quality of the four down to <i>t</i> = 0.</figcaption></figure>
+</section>
+
+
+<section id="results">
+  <h2>Results</h2>
+  <div class="gallery" data-base="assets/results/"></div>
+
+  <h3>Quantitative comparison</h3>
+  <p>1,000 FFHQ and 800 DIV2K images at 768×768, measurement noise σ<sub>y</sub> = 0.03, 50 NFEs for every method, all on Stable Diffusion 3.5-Medium.</p>
+  <figure class="paper-table"><div class="table-scroll"><img src="assets/fig/table1.png" alt="PSNR, SSIM, FID and LPIPS of FlowChef, FlowDPS, FLAIR, Flower, FlowLPS and FLINT for super-resolution x8 and x12, motion deblurring and Gaussian deblurring on FFHQ and DIV2K at 768 x 768." loading="lazy"></div><figcaption>Averages over 1,000 FFHQ and 800 DIV2K images with 50 NFEs and Gaussian noise σ<sub>y</sub> = 0.03.</figcaption></figure>
+
+  <h3>Computational cost vs. performance</h3>
+  <figure><picture><source media="(max-width: 720px)" srcset="assets/fig/cost_performance_mobile.jpg"><img src="assets/fig/cost_performance.jpg" alt="Cost and quality: PSNR and LPIPS against sampling time in seconds for super-resolution x8 and Gaussian deblurring on FFHQ; FLINT at 25, 30, 40 and 50 NFEs lies above and left of FlowChef, FlowDPS, FLAIR, Flower and FlowLPS." loading="lazy"></picture><figcaption>PSNR and LPIPS against sampling time (s) on FFHQ for super-resolution ×8 and Gaussian deblurring; the number after FLINT is its NFE count. With 30 NFEs FLINT already surpasses nearly all 50-NFE baselines on PSNR and LPIPS.</figcaption></figure>
+</section>
+
+<section id="bibtex">
+  <h2>BibTeX</h2>
+  <button class="copy" type="button" data-copy data-target="#bib">Copy</button>
+  <pre class="bib" id="bib">@inproceedings{bang2026flint,
+  title     = {{FLINT}: Coupling Proximal Initialization and Bounded Stochasticity for Flow-Matching Inverse Problems},
+  author    = {Bang, Junseo and Choi, Daewon and Moon, Dong Ju and Chun, Se Young},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026}
+}</pre>
+</section>
+</div>
+<footer>FLINT, NeurIPS 2026. Seoul National University.</footer>
+
+<script src="assets/results/data.js"></script>
+<script src="assets/flint.js"></script>
+</body>
+</html>
