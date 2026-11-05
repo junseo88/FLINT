@@ -4,7 +4,7 @@
 
 Seoul National University
 
-[Paper]() | [arXiv]() | [Project page](https://junseo88.github.io/FLINT/)
+[Paper](https://arxiv.org/pdf/2611.05945) | [arXiv](https://arxiv.org/abs/2611.05945) | [Project page](https://junseo88.github.io/FLINT/)
 
 ![main](assets/main.jpg)
 
