@@ -165,9 +165,10 @@
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-scroll img { display: block; width: 100%; min-width: 720px; height: auto; }
   .paper-table figcaption { font-size: 0.9em; opacity: .8; margin-top: 8px; }
-  /* the video keeps its own 1920x1080 ratio (width/height attributes + intrinsic size); never stretched */
-  .video-fig video { display: block; width: 100%; height: auto; object-fit: contain; border-radius: var(--radius);
-                     box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); }
+  /* the video keeps its own 1920x1080 ratio (width/height attributes + intrinsic size). transform/scale are pinned so
+     browser add-ons that stretch videos to 21:9 cannot distort it on this page */
+  .video-fig video, #cover-video { display: block; width: 100%; height: auto; object-fit: contain !important; border-radius: var(--radius);
+                     box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); transform: none !important; scale: none !important; }
 </style>
 </head>
 <body>
