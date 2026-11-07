@@ -165,8 +165,9 @@
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-scroll img { display: block; width: 100%; min-width: 720px; height: auto; }
   .paper-table figcaption { font-size: 0.9em; opacity: .8; margin-top: 8px; }
-  .video-fig video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius);
-                     background: #0b1222; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); }
+  /* the video keeps its own 1920x1080 ratio (width/height attributes + intrinsic size); never stretched */
+  .video-fig video { display: block; width: 100%; height: auto; object-fit: contain; border-radius: var(--radius);
+                     box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); }
 </style>
 </head>
 <body>
@@ -205,7 +206,7 @@
 <section id="video">
   <h2>Video</h2>
   <figure class="video-fig">
-    <video id="cover-video" src="assets/flint_cover.mp4" poster="assets/fig/cover_poster.jpg" controls muted playsinline preload="metadata"
+    <video id="cover-video" src="assets/flint_cover.mp4" poster="assets/fig/cover_poster.jpg" width="1920" height="1080" controls muted playsinline preload="metadata"
            aria-label="A 38-second overview of FLINT: the two lines of prior work, the bound that couples initialization and stochasticity, the two stages, and results."></video>
   </figure>
 </section>
