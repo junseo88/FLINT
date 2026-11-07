@@ -166,12 +166,14 @@
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-scroll img { display: block; width: 100%; min-width: 720px; height: auto; }
   .paper-table figcaption { font-size: 0.9em; opacity: .8; margin-top: 8px; }
+  .video-fig video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius);
+                     background: #0b1222; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18); }
 </style>
 </head>
 <body>
 <nav class="sections" aria-label="Sections">
   <ul>
-    <li><a href="#idea">Idea</a></li><li><a href="#method">Method</a></li>
+    <li><a href="#video">Video</a></li><li><a href="#idea">Idea</a></li><li><a href="#method">Method</a></li>
     <li><a href="#results">Results</a></li><li><a href="#bibtex">BibTeX</a></li>
   </ul>
 </nav>
@@ -199,6 +201,15 @@
 <section id="abstract">
   <h2>Abstract</h2>
   <p>Flow matching models have emerged as a dominant paradigm for generative posterior sampling in imaging inverse problems. Existing solvers follow two distinct lines of work: trajectory-space methods, which refine sampling dynamics from random initial noise, and source-space methods, which optimize the initial noise itself. While most prior work treats these as independent design choices, we show that they are inherently coupled. We derive a unified stability bound that links initialization proximity and cumulative sampling stochasticity through a multiplicative envelope, complemented by two empirical observations. First, we identify a sufficiency regime in which a moderately optimized proximal source initialization is enough to attain the performance plateau, rendering exhaustive source-space optimization unnecessary. Second, this initial advantage is fragile: it is eroded by excessive stochasticity accumulation during guided sampling, necessitating a mechanism that bounds the cumulative noise injection. These findings motivate FLINT, a two-stage framework that operationalizes this coupling. FLINT establishes a high-fidelity starting point via a manifold-constrained proximal objective in only a few iterations, then performs guided sampling under a bounded stochasticity schedule that helps prevent erasure of the initialization advantage. Across diverse inverse problems, FLINT delivers state of the art perceptual quality and competitive distortion metrics while maintaining superior computational efficiency.</p>
+</section>
+
+<section id="video">
+  <h2>Video</h2>
+  <figure class="wide video-fig">
+    <video id="cover-video" src="assets/flint_cover.mp4" poster="assets/fig/cover_poster.jpg" controls muted playsinline preload="metadata"
+           aria-label="A 38-second overview of FLINT: the two lines of prior work, the bound that couples initialization and stochasticity, the two stages, and results."></video>
+    <figcaption>FLINT in 38 seconds: two lines of prior work, the bound that couples them, the two stages, and results across inverse problems.</figcaption>
+  </figure>
 </section>
 
 <section id="idea">
@@ -275,5 +286,23 @@
 
 <script src="assets/results/data.js"></script>
 <script src="assets/flint.js"></script>
+<script>
+  // Cover video: plays (muted) once half of it is in view and pauses when scrolled away. It does not resume after a
+  // manual pause, does not loop, and never autoplays under prefers-reduced-motion.
+  (function () {
+    var v = document.getElementById('cover-video');
+    if (!v || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var auto = false, userPaused = false;
+    v.addEventListener('play', function () { userPaused = false; });
+    v.addEventListener('pause', function () { if (!auto && !v.ended) userPaused = true; auto = false; });
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !v.ended && !userPaused) v.play().catch(function () {});
+        else if (!e.isIntersecting && !v.paused) { auto = true; v.pause(); }
+      });
+    }, { threshold: 0.5 }).observe(v);
+  })();
+</script>
 </body>
 </html>
