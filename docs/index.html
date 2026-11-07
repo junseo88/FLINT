@@ -213,7 +213,7 @@
 </section>
 
 <section id="idea">
-  <h2>Initialization and stochasticity are coupled</h2>
+  <h2>Analysis: Coupling of Proximal Initialization and Sampling Stochasticity</h2>
   <p>Most solvers either steer the sampling trajectory from random noise or optimize the initial noise itself, and the two are usually treated as separate design choices.</p>
   <figure class="wide paradigms">
     <picture><source media="(max-width: 720px)" srcset="assets/fig/paradigms_mobile.svg"><img src="assets/fig/paradigms.svg" alt="Five panels on stacked noise-level manifolds from M1 at the top to M0 at the bottom, with the measurement subspace y = Ax as a green line. Trajectory-space methods: (a) DPS and FlowChef start from random noise and alternate a generative step with a measurement-guided correction on every noisy state; (b) FlowDPS and Flower jump to the clean estimate, correct it and re-noise to the next level. Source-space methods: (c) DMPlug and D-Flow run many MAP iterations on the initial noise, then one deterministic flow to x0; (d) N-HMC and D-Flow SGLD sample the initial noise with Hamiltonian or Langevin dynamics instead. (e) FLINT: a short measurement-guided move from the random start to a proximal start, then a guided trajectory inside a narrow band of bounded stochasticity that ends where M0 meets the measurement subspace."></picture>
